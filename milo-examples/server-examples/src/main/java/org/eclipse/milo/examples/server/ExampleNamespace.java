@@ -276,7 +276,7 @@ public class ExampleNamespace extends ManagedNamespaceWithLifecycle {
         addScalarNodes(rootNode);
         addAdminReadableNodes(rootNode);
         addAdminWritableNodes(rootNode);
-        addDynamicNodes(rootNode);
+        addDynamicNodesBatch(rootNode);
         addDataAccessNodes(rootNode);
         addWriteOnlyNodes(rootNode);
     }
@@ -531,33 +531,170 @@ public class ExampleNamespace extends ManagedNamespaceWithLifecycle {
         }
 
         // Dynamic Double
-        {
-            String name = "Double";
-            NodeId typeId = Identifiers.Double;
-            Variant variant = new Variant(0.0);
+//        {
+//            String name = "Double";
+//            NodeId typeId = Identifiers.Double;
+//            Variant variant = new Variant(0.0);
+//
+//            UaVariableNode node = new UaVariableNode.UaVariableNodeBuilder(getNodeContext())
+//                .setNodeId(newNodeId("HelloWorld/Dynamic/" + name))
+//                .setAccessLevel(AccessLevel.READ_WRITE)
+//                .setBrowseName(newQualifiedName(name))
+//                .setDisplayName(LocalizedText.english(name))
+//                .setDataType(typeId)
+//                .setTypeDefinition(Identifiers.BaseDataVariableType)
+//                .build();
+//
+//            node.setValue(new DataValue(variant));
+//
+//            node.getFilterChain().addLast(
+//                new AttributeLoggingFilter(),
+//                AttributeFilters.getValue(
+//                    ctx ->
+//                        new DataValue(new Variant(random.nextDouble()))
+//                )
+//            );
+//
+//            getNodeManager().addNode(node);
+//            dynamicFolder.addOrganizes(node);
+//        }
 
-            UaVariableNode node = new UaVariableNode.UaVariableNodeBuilder(getNodeContext())
-                .setNodeId(newNodeId("HelloWorld/Dynamic/" + name))
-                .setAccessLevel(AccessLevel.READ_WRITE)
-                .setBrowseName(newQualifiedName(name))
-                .setDisplayName(LocalizedText.english(name))
-                .setDataType(typeId)
-                .setTypeDefinition(Identifiers.BaseDataVariableType)
-                .build();
+        for (int i = 0; i < 1000; i++) {
+            {
+                String name = "Double"+i;
+                NodeId typeId = Identifiers.Double;
+                Variant variant = new Variant(0.0);
 
-            node.setValue(new DataValue(variant));
+                UaVariableNode node = new UaVariableNode.UaVariableNodeBuilder(getNodeContext())
+                        .setNodeId(newNodeId("HelloWorld/Dynamic/" + name))
+                        .setAccessLevel(AccessLevel.READ_WRITE)
+                        .setBrowseName(newQualifiedName(name))
+                        .setDisplayName(LocalizedText.english(name))
+                        .setDataType(typeId)
+                        .setTypeDefinition(Identifiers.BaseDataVariableType)
+                        .build();
 
-            node.getFilterChain().addLast(
-                new AttributeLoggingFilter(),
-                AttributeFilters.getValue(
-                    ctx ->
-                        new DataValue(new Variant(random.nextDouble()))
-                )
+                node.setValue(new DataValue(variant));
+
+                node.getFilterChain().addLast(
+                        new AttributeLoggingFilter(),
+                        AttributeFilters.getValue(
+                                ctx ->
+                                        new DataValue(new Variant(random.nextDouble()))
+                        )
+                );
+
+                getNodeManager().addNode(node);
+                dynamicFolder.addOrganizes(node);
+            }
+        }
+    }
+
+    private void addDynamicNodesBatch(UaFolderNode rootNode) {
+        for (int i = 0; i < 200; i++) {
+            String dynamicFolderQualifiedName = "Dynamic_folder_"+i;
+            String dynamicFolderName = "HelloWorld/"+dynamicFolderQualifiedName;
+
+            UaFolderNode dynamicFolder = new UaFolderNode(
+                    getNodeContext(),
+                    newNodeId(dynamicFolderName),
+                    newQualifiedName(dynamicFolderQualifiedName),
+                    LocalizedText.english(dynamicFolderQualifiedName)
             );
 
-            getNodeManager().addNode(node);
-            dynamicFolder.addOrganizes(node);
+            getNodeManager().addNode(dynamicFolder);
+            rootNode.addOrganizes(dynamicFolder);
+
+            // Dynamic Boolean
+            {
+                String name = dynamicFolderName+"/"+"Boolean";
+                NodeId typeId = Identifiers.Boolean;
+                Variant variant = new Variant(false);
+
+                UaVariableNode node = new UaVariableNode.UaVariableNodeBuilder(getNodeContext())
+                        .setNodeId(newNodeId(dynamicFolderName+"/" + name))
+                        .setAccessLevel(AccessLevel.READ_WRITE)
+                        .setBrowseName(newQualifiedName(name))
+                        .setDisplayName(LocalizedText.english(name))
+                        .setDataType(typeId)
+                        .setTypeDefinition(Identifiers.BaseDataVariableType)
+                        .build();
+
+                node.setValue(new DataValue(variant));
+
+                node.getFilterChain().addLast(
+                        new AttributeLoggingFilter(),
+                        AttributeFilters.getValue(
+                                ctx ->
+                                        new DataValue(new Variant(random.nextBoolean()))
+                        )
+                );
+
+                getNodeManager().addNode(node);
+                dynamicFolder.addOrganizes(node);
+            }
+
+            // Dynamic Int32
+            {
+                String name = dynamicFolderName+"/"+"Int32";
+                NodeId typeId = Identifiers.Int32;
+                Variant variant = new Variant(0);
+
+                UaVariableNode node = new UaVariableNode.UaVariableNodeBuilder(getNodeContext())
+                        .setNodeId(newNodeId(dynamicFolderName+"/" + name))
+                        .setAccessLevel(AccessLevel.READ_WRITE)
+                        .setBrowseName(newQualifiedName(name))
+                        .setDisplayName(LocalizedText.english(name))
+                        .setDataType(typeId)
+                        .setTypeDefinition(Identifiers.BaseDataVariableType)
+                        .build();
+
+                node.setValue(new DataValue(variant));
+
+                node.getFilterChain().addLast(
+                        new AttributeLoggingFilter(),
+                        AttributeFilters.getValue(
+                                ctx ->
+                                        new DataValue(new Variant(random.nextInt()))
+                        )
+                );
+
+                getNodeManager().addNode(node);
+                dynamicFolder.addOrganizes(node);
+            }
+
+            // Dynamic Double
+            for (int j = 0; j < 1000; j++) {
+                {
+                    String name = dynamicFolderName+"/"+"Double"+j;
+                    NodeId typeId = Identifiers.Double;
+                    Variant variant = new Variant(0.0);
+
+                    UaVariableNode node = new UaVariableNode.UaVariableNodeBuilder(getNodeContext())
+                            .setNodeId(newNodeId(name))
+                            .setAccessLevel(AccessLevel.READ_WRITE)
+                            .setBrowseName(newQualifiedName(name))
+                            .setDisplayName(LocalizedText.english(name))
+                            .setDataType(typeId)
+                            .setTypeDefinition(Identifiers.BaseDataVariableType)
+                            .build();
+
+                    node.setValue(new DataValue(variant));
+
+                    node.getFilterChain().addLast(
+                            new AttributeLoggingFilter(),
+                            AttributeFilters.getValue(
+                                    ctx ->
+                                            new DataValue(new Variant(random.nextDouble()))
+                            )
+                    );
+
+                    getNodeManager().addNode(node);
+                    dynamicFolder.addOrganizes(node);
+                }
+            }
         }
+
     }
 
     private void addDataAccessNodes(UaFolderNode rootNode) {

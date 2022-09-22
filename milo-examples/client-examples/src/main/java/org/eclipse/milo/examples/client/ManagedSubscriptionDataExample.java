@@ -53,7 +53,7 @@ public class ManagedSubscriptionDataExample implements ClientExample {
             logger.info("item created for nodeId={}", dataItem.getNodeId());
 
             // let the example run for 5 seconds before completing
-            Thread.sleep(5000);
+            Thread.sleep(50000);
 
             dataItem.delete();
         } else {

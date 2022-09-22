@@ -99,7 +99,7 @@ public class ClientExampleRunner {
                     .setCertificateChain(loader.getClientCertificateChain())
                     .setCertificateValidator(certificateValidator)
                     .setIdentityProvider(clientExample.getIdentityProvider())
-                    .setRequestTimeout(uint(5000))
+                    .setRequestTimeout(uint(30000))
                     .build()
         );
     }
